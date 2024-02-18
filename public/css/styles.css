@@ -1,0 +1,63 @@
+.container {
+  display: flex;
+  width: 800px;
+  justify-content: space-between;
+}
+
+li {
+  list-style: none;
+  padding: 0 10px;
+  margin: 10px;
+  border-radius: 5px;
+  background-color: rgb(245, 245, 245);
+  display: flex;
+  /* flex-direction: column; */
+  /* justify-content: space-between; */
+  align-items: center;
+  font-size: 20px;
+  color: #000;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+ul {
+  padding: 0;
+}
+
+h1 {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+span {
+  font-weight: bold;
+  padding: 10px;
+}
+
+span.status {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  background-color: white;
+  display: flex;
+}
+
+.fa-check {
+  background-color: green;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.fa-trash {
+  background-color: red;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 20px;
+}

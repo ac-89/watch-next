@@ -24,8 +24,10 @@ app.get("/", (req, res) => {
     .find()
     .toArray()
     .then((data) => {
-      //   console.log(data[1].name);
-      res.render("index.ejs", { movies: data });
+      const rand = Math.floor(Math.random() * data.length);
+      console.log(rand);
+
+      res.render("index.ejs", { movies: data, rand: rand });
     })
     .catch((err) => console.log(err));
 });
@@ -33,7 +35,7 @@ app.get("/", (req, res) => {
 app.post("/addMovie", (req, res) => {
   console.log(req);
   db.collection("movies")
-    .insertOne({ name: req.body.movie })
+    .insertOne({ name: req.body.movie, watched: false })
     .then((result) => {
       console.log(result);
       res.redirect("/");
@@ -48,6 +50,30 @@ app.delete("/deleteMovie", (req, res) => {
       console.log(result);
       res.json("success");
     });
+});
+
+app.put("/markWatched", (request, response) => {
+  const watched = request.body.itemFromJS.watched;
+  console.log(watched);
+  db.collection("movies")
+    .updateOne(
+      { name: request.body.itemFromJS },
+      {
+        $set: {
+          watched: !watched,
+        },
+      },
+      {
+        upsert: false,
+      }
+    )
+    .then((result) => {
+      "";
+      console.log("Marked Watched");
+      console.log(request.body);
+      response.json("Marked Watched");
+    })
+    .catch((error) => console.error(error));
 });
 
 app.listen(PORT || process.env.PORT, () => {
