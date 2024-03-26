@@ -1,0 +1,25 @@
+<p>Here are your movies</p>
+
+{{#if movies}}
+
+  {{#each movies}}
+    <div class="card horizontal">
+      <div class="card-image">
+        <img src="https://image.tmdb.org/t/p/w500{{poster_path}}" />
+      </div>
+      <div class="card-stacked">
+        <div class="card-content">
+          <p>{{title}}</p>
+          <p>Status: {{status}}</p>
+          <p>Release Date: {{release_date}}</p>
+          <p>Overview: {{overview}}</p>
+        </div>
+        <div class="card-action">
+          <a href="/movies/{{_id}}">View</a>
+        </div>
+      </div>
+    </div>
+  {{/each}}
+{{else}}
+  <p>You have no movies</p>
+{{/if}}

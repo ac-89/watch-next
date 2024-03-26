@@ -1,0 +1,35 @@
+<h6>Dashboard</h6>
+<h3>Welcome {{name}}</h3>
+<p>Here are your movies</p>
+
+{{#if movies}}
+
+  <div class="row">
+    {{#each movies}}
+      <div class="col s4">
+        <div class="card large">
+          <div class="card-image">
+
+            <img src="https://image.tmdb.org/t/p/w500{{poster_path}}" />
+            <span class="card-title">{{title}}</span>
+          </div>
+          <div class="card-content">
+
+            <form action="/addMovie/{{_id}}" method="POST">
+              <a class="waves-effect waves-light btn" type="submit"><i
+                  class="material-icons left"
+                ></i>Add</a>
+            </form>
+
+            <p>Status: {{status}}</p>
+            <p>Release Date: {{release_date}}</p>
+            <p>Overview: {{overview}}</p>
+            <p>{{overview}}</p>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+{{else}}
+  <p>You have no movies</p>
+{{/if}}
