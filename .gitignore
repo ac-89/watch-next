@@ -1,4 +1,4 @@
 node_modules
 .env
 data.txt
-config/config.env
+/config/config.env
