@@ -13,7 +13,10 @@ router.get("/", ensureGuest, (req, res) => {
 //@route GET /dashboard
 router.get("/dashboard", ensureAuth, async (req, res) => {
   try {
-    const movies = await Movie.find({ user: req.user.id }).lean();
+    const movies = await Movie.aggregate([
+      { $sample: { size: 5 } },
+      { $match: { status: "Not Watched" } },
+    ]);
     console.log(movies);
     res.render("dashboard", {
       name: req.user.firstName,

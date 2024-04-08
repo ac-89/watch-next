@@ -18,14 +18,11 @@ require("./config/passport")(passport);
 
 connectDB();
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-const addIcon = require("./helpers/hbs");
+const { addIcon, truncate } = require("./helpers/hbs");
 
 //handlebars
 app.engine(
@@ -33,6 +30,7 @@ app.engine(
   exphbs.engine({
     helpers: {
       addIcon,
+      truncate,
     },
     defaultLayout: "main",
     extname: ".hbs",

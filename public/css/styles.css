@@ -8,10 +8,31 @@ p {
   text-align: center;
 }
 
-.row {
-  width: 800px;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-align: center;
 }
 
-h3 {
-  text-align: center;
+/* .card-image img {
+  height: 200px;
+  width: auto;
+} */
+
+.card-content {
+  padding: 6px !important;
+}
+
+.overview {
+  overflow: hidden;
+}
+
+.card-title {
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 12px 24px;
+  width: 100%;
 }
