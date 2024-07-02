@@ -1,70 +1,85 @@
-<h6>Dashboard</h6>
-<h3>Welcome {{name}}</h3>
-<p>Here are your movies</p>
+<div class="container">
+  <h3>Database</h3>
+  {{#if dbMovies}}
+    <div class="row">
+      {{#each dbMovies}}
+        <div class="col s4">
+          <div class="card large">
+            <div class="card-image">
 
-<h3>Database</h3>
-{{#if dbMovies}}
-  <div class="row">
-    {{#each dbMovies}}
+              <img src="https://image.tmdb.org/t/p/w500{{poster_path}}" />
+              <span class="card-title">{{title}}</span>
+            </div>
+            <div class="card-content">
+
+              {{! <button class="waves-effect waves-light btn" type="submit"><i
+                  class="material-icons left"
+                ></i>Add</button> }}
+              {{#if (watchStatus status)}}
+                <p class="stars">
+                  <span>
+
+                  </span>
+                </p>
+              {{/if}}
+              <p>Status: {{status}}</p>
+              <p>Release Date: {{release_date}}</p>
+              <p>Overview: {{overview}}</p>
+              <p>{{overview}}</p>
+            </div>
+            <div class="card-action">
+              <span class="btn mark-watched" data-id="{{_id}}">Mark Watched</span>
+              <span class="btn orange delete" data-id="{{_id}}">Delete</span>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="row">
       <div class="col s4">
         <div class="card large">
           <div class="card-image">
 
-            <img src="https://image.tmdb.org/t/p/w500{{poster_path}}" />
-            <span class="card-title">{{title}}</span>
+            <img src="/images/poster-placeholder.jpg" />
+            <span class="card-title">No movie found</span>
           </div>
-          <div class="card-content">
-            <form action="/movies/addMovie/{{id}}" method="post">
-              <input type="submit" value="Add" />
-            </form>
 
-            {{! <button class="waves-effect waves-light btn" type="submit"><i
-                  class="material-icons left"
-                ></i>Add</button> }}
-
-            <p>Status: {{status}}</p>
-            <p>Release Date: {{release_date}}</p>
-            <p>Overview: {{overview}}</p>
-            <p>{{overview}}</p>
-          </div>
         </div>
       </div>
-    {{/each}}
-  </div>
-{{else}}
-  <p>You have no movies</p>
-{{/if}}
+    </div>{{/if}}
 
-{{#if movies}}
+  {{#if movies}}
 
-  <div class="row">
-    <h3>Search</h3>
-    {{#each movies}}
-      <div class="col s4">
-        <div class="card large">
-          <div class="card-image">
+    <div class="row">
+      <h3>Search</h3>
 
-            <img src="https://image.tmdb.org/t/p/w500{{poster_path}}" />
-            <span class="card-title">{{title}}</span>
-          </div>
-          <div class="card-content">
-            <form action="/movies/addMovie/{{id}}" method="post">
-              <input type="submit" value="Add" />
-            </form>
+      {{#each movies}}
+        <div class="col s4">
+          <div class="card large">
+            <div class="card-image">
 
-            {{! <button class="waves-effect waves-light btn" type="submit"><i
+              <img src="https://image.tmdb.org/t/p/w500{{poster_path}}" />
+              <span class="card-title">{{title}}</span>
+            </div>
+            <div class="card-content desc-view">
+
+              {{! <button class="waves-effect waves-light btn" type="submit"><i
                   class="material-icons left"
                 ></i>Add</button> }}
-
-            <p>Status: {{status}}</p>
-            <p>Release Date: {{release_date}}</p>
-            <p>Overview: {{overview}}</p>
-            <p>{{overview}}</p>
+              <p>Status: Not Added</p>
+              <p>Release Date: {{release_date}}</p>
+              <p class="overview">Overview: {{overview}}</p>
+            </div>
+            <div class="card-action">
+              <span class="btn green add" data-id="{{id}}">Add</span>
+              <span class="btn orange delete" data-id="{{_id}}">Delete</span>
+            </div>
           </div>
         </div>
-      </div>
-    {{/each}}
-  </div>
-{{else}}
-  <p>You have no movies</p>
-{{/if}}
+      {{/each}}
+    </div>
+  {{else}}
+    <p>You have no movies</p>
+  {{/if}}
+</div>

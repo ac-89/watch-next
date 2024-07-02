@@ -1,32 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const { ensureAuth, ensureGuest } = require("../middleware/auth");
-
+const { ensureAuth } = require("../middleware/auth");
 const Movie = require("../models/Movie");
-
-//@desc Login/Landing Page
-//@route GET /
-router.get("/", ensureGuest, (req, res) => {
-  res.render("login", { layout: "login" });
-});
-//@desc Dashboard
-//@route GET /dashboard
-router.get("/dashboard", ensureAuth, async (req, res) => {
-  try {
-    const movies = await Movie.aggregate([
-      { $sample: { size: 5 } },
-      { $match: { status: "Not Watched" } },
-    ]);
-    // console.log(movies);
-    res.render("dashboard", {
-      name: req.user.firstName,
-      movies,
-    });
-  } catch (error) {
-    console.error(error);
-    res.render("error/500");
-  }
-});
+const { router } = require(".");
 
 //@desc Show add page
 //@route GET /stories/add
@@ -38,7 +12,7 @@ router.get("/search", ensureAuth, async (req, res) => {
         method: "GET",
         accept: "application/json",
         Authorization:
-          `Bearer ${process.env.API_READ_ACCESS_TOKEN}`,
+          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhYWIzNGI5MjE3ODlkYThkZjdkZjM5MmU4MjgzYjNjYiIsInN1YiI6IjY1ZDIzZDllNzdjMDFmMDE2MzBmMTZmOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.R-rGV16xv7eqDBejauPToooeVKO2uNNWsmei1VEyA6A",
       },
     };
     const movieTitle = req.query.title;
@@ -61,15 +35,11 @@ router.get("/search", ensureAuth, async (req, res) => {
     )
       .then((response) => response.json())
       .then((data) => {
-        data.results.forEach((movie) => {
-          dbMovies.forEach((dbMovie) => {
-            if (movie.id == dbMovie.id) {
-              data.results.shift(movie);
-            }
-          });
-        });
         return data.results;
       });
+    if (movies[0].id == dbMovies[0].id) {
+      movies.shift(0);
+    }
 
     res.render("search", {
       dbMovies: dbMovies,
@@ -81,5 +51,3 @@ router.get("/search", ensureAuth, async (req, res) => {
     res.render("error/500");
   }
 });
-
-module.exports = router;

@@ -12,4 +12,18 @@ module.exports = {
     }
     return str;
   },
+  watchStatus: function (status) {
+    return status !== "Not Watched";
+  },
+  // starReview: function (rating) {
+  //   let stars = "";
+  //   if (rating > 0) {
+  //     for (let i = 0; i < rating; i++) {
+  //       stars += `<i class="fas fa-star"></i>`;
+  //     }
+  //     return stars;
+  //   } else {
+  //     return "0 stars";
+  //   }
+  // },
 };

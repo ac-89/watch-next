@@ -33,6 +33,13 @@ const MovieSchema = new Mongoose.Schema({
   genre_ids: {
     type: Array,
   },
+  //star rating
+  rating: {
+    type: Number,
+    min: 0,
+    max: 5,
+    default: 0,
+  },
 });
 
 module.exports = Mongoose.model("Movie", MovieSchema);

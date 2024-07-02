@@ -1,16 +1,17 @@
 const express = require("express");
 const app = express();
+app.use(express.json());
 const router = express.Router();
 const { ensureAuth } = require("../middleware/auth");
-const bodyParser = require("body-parser");
 
 const Movie = require("../models/Movie");
-const {
-  appendHandler,
-} = require("jsdom/lib/jsdom/living/helpers/create-event-accessor");
+// const {
+//   appendHandler,
+// } = require("jsdom/lib/jsdom/living/helpers/create-event-accessor");
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+function refreshPage(window) {
+  window.location.reload();
+}
 
 //@desc Show add page
 //@route GET /movies/add
@@ -52,54 +53,6 @@ router.get("get/:id", async (req, res) => {
     res.send("error/500");
   }
 });
-//@desc Show add page
-//@route GET /stories/add
-router.get("/search", ensureAuth, async (req, res) => {
-  try {
-    console.log(req.user);
-    const userId = req.user.id;
-    const options = {
-      headers: {
-        method: "GET",
-        accept: "application/json",
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhYWIzNGI5MjE3ODlkYThkZjdkZjM5MmU4MjgzYjNjYiIsInN1YiI6IjY1ZDIzZDllNzdjMDFmMDE2MzBmMTZmOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.R-rGV16xv7eqDBejauPToooeVKO2uNNWsmei1VEyA6A",
-      },
-    };
-    const movieTitle = req.query.title;
-    const dbMovies = await Movie.aggregate([
-      {
-        $search: {
-          text: {
-            query: movieTitle,
-            path: "title",
-          },
-        },
-      },
-      {
-        $limit: 5,
-      },
-    ]);
-    console.log(`dbMovies: ${dbMovies}`);
-    const movies = await fetch(
-      `https://api.themoviedb.org/3/search/movie?query=${movieTitle}`,
-      options
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        return data.results;
-      });
-    console.log(`movies: ${movies}`);
-    res.render("search", {
-      dbMovies: dbMovies,
-      movies: movies,
-      userId: userId,
-    });
-  } catch (error) {
-    console.log(error);
-    res.render("error/500");
-  }
-});
 
 //@desc Add movie to mongoDB
 //@route POST /movies
@@ -109,10 +62,10 @@ router.post(`/addMovie/:id`, ensureAuth, async (req, res) => {
     console.log(req.body);
     const options = {
       headers: {
-        method: "GET",
+        method: "POST",
         accept: "application/json",
         Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhYWIzNGI5MjE3ODlkYThkZjdkZjM5MmU4MjgzYjNjYiIsInN1YiI6IjY1ZDIzZDllNzdjMDFmMDE2MzBmMTZmOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.R-rGV16xv7eqDBejauPToooeVKO2uNNWsmei1VEyA6A",
+          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhYWIzNGI5MjE3ODlkYThkZjdkZjM5MmU4MjgzYjNjYiIsIm5iZiI6MTcxOTg2MzMyOC43NTI5NDIsInN1YiI6IjY1ZDIzZDllNzdjMDFmMDE2MzBmMTZmOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.H_vt6LvP-qndgL7IL5dJHTx3NEUBXwO_BQBE23nVw6Q",
       },
     };
     const movie = await fetch(
@@ -132,7 +85,8 @@ router.post(`/addMovie/:id`, ensureAuth, async (req, res) => {
       status: "Not Watched",
       user: req.user.id,
     });
-    res.redirect("/dashboard");
+    //Reload page
+    res.redirect("back");
   } catch (error) {
     console.log(error);
     res.send("error/500");
@@ -140,23 +94,42 @@ router.post(`/addMovie/:id`, ensureAuth, async (req, res) => {
 });
 
 //@desc Update movie watched status
-router.put(`/updateMovie/:id`, ensureAuth, async (req, res) => {
+router.put(`/markWatched/:id`, ensureAuth, async (req, res) => {
   try {
-    const options = {
-      headers: {
-        method: "POST",
-        accept: "application/json",
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhYWIzNGI5MjE3ODlkYThkZjdkZjM5MmU4MjgzYjNjYiIsInN1YiI6IjY1ZDIzZDllNzdjMDFmMDE2MzBmMTZmOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.R-rGV16xv7eqDBejauPToooeVKO2uNNWsmei1VEyA6A",
-      },
-    };
-    req.body = req.params.id;
-    console.log(req.body);
-    await Movie.findOneAndUpdate({ _id: req.body }, { status: "Watched" });
-    res.redirect("/dashboard");
+    let movieId = req.params.id;
+    console.log(`movieId: ${movieId}`);
+
+    // Find the movie document by ID
+    const movie = await Movie.findById(movieId);
+    if (!movie) {
+      return res.status(404).json({ error: "Movie not found" });
+    }
+
+    // Toggle the status between "Not Watched" and "Watched"
+    movie.status = movie.status === "Not Watched" ? "Watched" : "Not Watched";
+
+    // Save the updated movie document
+    await movie.save();
+
+    // Respond with success message
+    res.json({ message: "Status updated successfully", status: movie.status });
+    //reloads the page
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//@desc Delete movie
+
+router.delete(`/deleteMovie/:id`, ensureAuth, async (req, res) => {
+  try {
+    console.log(req)
+    let movieId = req.params.id;
+    console.log(`movieId: ${movieId}`);
+    await Movie.deleteOne({ _id: movieId })
   } catch (error) {
     console.log(error);
-    res.send("error/500");
+    res.status(500).render("error/500", { error: error });
   }
 });
 

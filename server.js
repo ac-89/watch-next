@@ -13,7 +13,7 @@ const MongoStore = require("connect-mongo");
 const exphbs = require("express-handlebars");
 
 dotenv.config({ path: "./config/config.env" });
-
+ 
 require("./config/passport")(passport);
 
 connectDB();
@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-const { addIcon, truncate } = require("./helpers/hbs");
+const { addIcon, truncate, watchStatus } = require("./helpers/hbs");
 
 //handlebars
 app.engine(
@@ -31,6 +31,7 @@ app.engine(
     helpers: {
       addIcon,
       truncate,
+      watchStatus,
     },
     defaultLayout: "main",
     extname: ".hbs",
